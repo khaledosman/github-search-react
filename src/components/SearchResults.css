@@ -1,0 +1,6 @@
+
+.search-results {
+  margin-top: 20px;
+  position: fixed;
+  width: var(--input-width);
+}

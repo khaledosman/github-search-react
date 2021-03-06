@@ -1,0 +1,5 @@
+.search-wrapper {
+  width: var(--input-width);
+  height: var(--input-height);
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}

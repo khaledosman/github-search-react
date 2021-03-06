@@ -13,7 +13,7 @@ ReactDOM.unstable_createRoot(
 
 // ReactDOM.render(
 //   <React.StrictMode>
-//     <App />
+//     <AutocompleteSearch />
 //   </React.StrictMode>,
 //   document.getElementById('root')
 // )
