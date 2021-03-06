@@ -45,15 +45,16 @@ function AutocompleteSearch ({ onSearchTriggered, results }) {
           ...autocompleteState,
           highlightedItemIdx: autocompleteState.highlightedItemIdx >= results.length - 1 ? autocompleteState.highlightedItemIdx : autocompleteState.highlightedItemIdx + 1
         }))
+      } else if (key === 13) {
+        // enter key
+        window.open(results[autocompleteState.highlightedItemIdx].html_url, '_blank')
       } else {
       // use the query to make request to github api
         onSearchTriggered(event.target.value)
-        if (!autocompleteState.isResultsShown) {
-          setAutocompleteState((autocompleteState) => ({ ...autocompleteState, isResultsShown: true }))
-        }
+        setAutocompleteState((autocompleteState) => ({ ...autocompleteState, isResultsShown: true, highlightedItemIdx: 0 }))
       }
     }, 100)
-  }, [setAutocompleteState, onSearchTriggered, results.length, autocompleteState.isResultsShown])
+  }, [autocompleteState.highlightedItemIdx, setAutocompleteState, onSearchTriggered, results])
 
   return (
     <div className='search-wrapper'>
