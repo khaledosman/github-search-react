@@ -6,8 +6,7 @@ export default memo(function SearchResults ({ results, highlightedItemIndex, onM
   return (
     <div className='search-results'>
       {results.length > 0 && results.map((result, index) => {
-        const classes = `search-results__item ${index === highlightedItemIndex ? 'search-results__item--highlighted' : null}`
-        return <SearchResultItem key={result.id} className={classes} item={result} onMouseEnter={onMouseEnter(index)} />
+        return <SearchResultItem key={result.id} isHighlighted={index === highlightedItemIndex} item={result} onMouseEnter={onMouseEnter(index)} />
       }
       )}
     </div>

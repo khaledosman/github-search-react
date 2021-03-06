@@ -1,5 +1,5 @@
 import './AutocompleteSearch.css'
-import { useState, memo, useCallback, useRef } from 'react'
+import { useState, memo, useCallback, useRef, useEffect } from 'react'
 import SearchInput from './SearchInput'
 import SearchResults from './SearchResults'
 
@@ -9,8 +9,18 @@ function AutocompleteSearch ({ onSearchTriggered, results }) {
     isResultsShown: true,
     highlightedItemIdx: -1
   })
-
+  useEffect(() => {
+    const $body = document.querySelector('body')
+    const handleBodyClicked = (e) => {
+      setAutocompleteState(autocompleteState => ({ ...autocompleteState, isResultsShown: false }))
+    }
+    $body.addEventListener('click', handleBodyClicked)
+    return () => {
+      $body.removeEventListener('click', handleBodyClicked)
+    }
+  }, [])
   const handleInputClicked = useCallback(e => {
+    e.stopPropagation()
     if (!autocompleteState.isResultsShown) {
       setAutocompleteState((autocompleteState) => ({ ...autocompleteState, isResultsShown: true }))
     }

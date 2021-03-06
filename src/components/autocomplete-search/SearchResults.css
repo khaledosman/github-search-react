@@ -1,0 +1,10 @@
+
+.search-results {
+  margin-top: 10px;
+  position: absolute;
+  z-index: 1;
+  top: var(--input-height);
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

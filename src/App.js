@@ -1,6 +1,6 @@
 import React, { memo, useState, useCallback } from 'react'
 import { searchUsers } from './helpers/github-api-helpers'
-import AutocompleteSearch from './components/AutocompleteSearch'
+import AutocompleteSearch from './components/autocomplete-search/AutocompleteSearch'
 import './App.css'
 
 export default memo(function App () {

@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { ReactComponent as SearchIcon } from '../assets/search-icon.svg'
+import { ReactComponent as SearchIcon } from '../../assets/search-icon.svg'
 import './SearchInput.css'
 
 export default memo(function SearchInput ({ onInputClicked, onKeyDown, placeholder }) {
