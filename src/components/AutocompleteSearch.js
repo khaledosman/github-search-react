@@ -1,58 +1,65 @@
 import './AutocompleteSearch.css'
-import { useState, memo, useCallback } from 'react'
-import { debounce } from '../helpers/github-api-helpers'
+import { useState, memo, useCallback, useRef } from 'react'
 import SearchInput from './SearchInput'
 import SearchResults from './SearchResults'
 
 function AutocompleteSearch ({ onSearchTriggered, results }) {
+  const timeoutId = useRef()
   const [autocompleteState, setAutocompleteState] = useState({
     isResultsShown: true,
     highlightedItemIdx: -1
   })
 
   const handleInputClicked = useCallback(e => {
-    setAutocompleteState((autocompleteState) => ({ ...autocompleteState, isResultsShown: true }))
-  }, [setAutocompleteState])
+    if (!autocompleteState.isResultsShown) {
+      setAutocompleteState((autocompleteState) => ({ ...autocompleteState, isResultsShown: true }))
+    }
+  }, [setAutocompleteState, autocompleteState])
 
   const handleMouseEnter = useCallback(index => e => {
     setAutocompleteState((autocompleteState) => ({ ...autocompleteState, highlightedItemIdx: index }))
   }, [])
 
   const handleKeyDown = useCallback(async (event) => {
-    const key = event.which
-
-    if (key === 27) {
-      // esc key
-      setAutocompleteState((autocompleteState) => ({
-        ...autocompleteState,
-        isResultsShown: false
-      }))
-    } else if (key === 38) {
-      // arrow down
-      setAutocompleteState((autocompleteState) => ({
-        ...autocompleteState,
-        highlightedItemIdx: autocompleteState.highlightedItemIdx === 0 ? autocompleteState.highlightedItemIdx : autocompleteState.highlightedItemIdx - 1
-      }))
-    } else if (key === 40) {
-      // arrow up
-      setAutocompleteState((autocompleteState) => ({
-        ...autocompleteState,
-        highlightedItemIdx: autocompleteState.highlightedItemIdx >= results.length - 1 ? autocompleteState.highlightedItemIdx : autocompleteState.highlightedItemIdx + 1
-      }))
-    } else {
-      // use the query to make request to github api
-      onSearchTriggered(event.target.value)
-      setAutocompleteState((autocompleteState) => ({ ...autocompleteState, isResultsShown: true }))
+    if (timeoutId) {
+      // debounce the event
+      clearTimeout(timeoutId.current)
     }
-  }, [setAutocompleteState, onSearchTriggered, results.length])
-
-  const debouncedHandleKeyDown = useCallback(e => debounce(() => handleKeyDown(e), 200), [handleKeyDown])
+    timeoutId.current = setTimeout(() => {
+      const key = event.which
+      if (key === 27) {
+      // esc key
+        setAutocompleteState((autocompleteState) => ({
+          ...autocompleteState,
+          isResultsShown: false
+        }))
+      } else if (key === 38) {
+      // arrow down
+        setAutocompleteState((autocompleteState) => ({
+          ...autocompleteState,
+          highlightedItemIdx: autocompleteState.highlightedItemIdx === 0 ? autocompleteState.highlightedItemIdx : autocompleteState.highlightedItemIdx - 1
+        }))
+      } else if (key === 40) {
+      // arrow up
+        setAutocompleteState((autocompleteState) => ({
+          ...autocompleteState,
+          highlightedItemIdx: autocompleteState.highlightedItemIdx >= results.length - 1 ? autocompleteState.highlightedItemIdx : autocompleteState.highlightedItemIdx + 1
+        }))
+      } else {
+      // use the query to make request to github api
+        onSearchTriggered(event.target.value)
+        if (!autocompleteState.isResultsShown) {
+          setAutocompleteState((autocompleteState) => ({ ...autocompleteState, isResultsShown: true }))
+        }
+      }
+    }, 100)
+  }, [setAutocompleteState, onSearchTriggered, results.length, autocompleteState.isResultsShown])
 
   return (
     <div className='search-wrapper'>
       <SearchInput
         onInputClicked={handleInputClicked}
-        onKeyDown={debouncedHandleKeyDown}
+        onKeyDown={handleKeyDown}
         placeholder='type a github username...'
       />
       {autocompleteState.isResultsShown && results.length > 0 &&
